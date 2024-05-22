@@ -1,32 +1,28 @@
 package com.example.pub.controller;
 
-
 import com.example.pub.configuration.RedisMessagePublisher;
-import com.example.pub.configuration.RedisMessageSubscriber;
-import com.example.pub.models.Message;
-import com.example.pub.models.Product;
-import com.example.pub.models.ProductRespository;
+import com.example.pub.models.*;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 
 @RestController
 @RequestMapping("/api/redis/pub")
-public class RedisController {
-    private static Logger logger = LoggerFactory.getLogger(RestController.class);
+public class RedisPublisherController {
+    private static final Logger logger = LoggerFactory.getLogger(RedisPublisherController.class);
 
     @Autowired
     private RedisMessagePublisher messagePublisher;
 
     @Autowired
     private ProductRespository productRespository;
+
+    @Autowired
+    private SessionRespository sessionRespository;
 
     @PostMapping("/publisher")
     public void publish(@RequestBody Message message) {
@@ -63,13 +59,23 @@ public class RedisController {
         messagePublisher.publish("[Deleted all products]");
     }
 
-    @GetMapping("/subscriber")
-    public List<String> getMessage() {
-        return RedisMessageSubscriber.messageList;
+    @PostMapping("/session")
+    public void newSession() {
+        Session session = new Session();
+        sessionRespository.save(session);
+        messagePublisher.publish(" [Added " + session + "]");
     }
 
+    @GetMapping("/sessions")
+    public List<String> getSessions() {
+        Iterable<Session> sessions = sessionRespository.findAll();
+        List<String> results = new ArrayList<>();
+        sessions.forEach(session -> results.add(session.toString()));
+        messagePublisher.publish(" [Retrieved Session's data]");
+        return results;
+    }
 
-    //    Process
+    // Redis Process
     private @NotNull Optional<Product> getProduct(String id) {
         return productRespository.findById(id);
     }
