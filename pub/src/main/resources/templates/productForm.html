@@ -1,0 +1,44 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<body>
+<form action="#" th:action="@{./}" th:object="${productForm}" method="post">
+    <table>
+        <tr>
+            <td>Name:</td>
+            <td><label>
+                <input type="text" th:field="*{name}"/>
+            </label></td>
+            <td th:if="${#fields.hasErrors('name')}" th:errors="*{name}">Name Error</td>
+        </tr>
+        <tr>
+            <td>Quantity:</td>
+            <td><label>
+                <input type="number" th:field="*{quantity}"/>
+            </label></td>
+            <td th:if="${#fields.hasErrors('quantity')}" th:errors="*{age}">Quantity Error</td>
+        </tr>
+        <tr>
+            <td>Price:</td>
+            <td><label>
+                <input type="number" th:field="*{price}"/>
+            </label></td>
+            <td th:if="${#fields.hasErrors('price')}" th:errors="*{price}">Price Error</td>
+        </tr>
+        <tr>
+            <td>
+                <button type="submit">Submit</button>
+            </td>
+        </tr>
+    </table>
+    <h3>Error existed</h3>
+    <p th:each="error : ${errors}">
+        <span th:text="${error}"></span>
+    </p>
+</form>
+
+<h3>List of Products</h3>
+<p th:each="product : ${productList}">
+    <span th:text="${product}"></span>
+</p>
+</body>
+</html>

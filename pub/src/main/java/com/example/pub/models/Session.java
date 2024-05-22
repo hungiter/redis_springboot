@@ -5,8 +5,8 @@ import org.springframework.data.redis.core.RedisHash;
 import org.springframework.data.redis.core.TimeToLive;
 
 // Fixed value = 60s
-@RedisHash(timeToLive = 60L)
-//@RedisHash
+//@RedisHash(timeToLive = 60L)
+@RedisHash
 public class Session {
     @Id
     private String id;

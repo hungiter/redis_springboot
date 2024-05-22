@@ -30,6 +30,13 @@ public class RedisPublisherController {
         messagePublisher.publish(message.toString());
     }
 
+    @GetMapping("/products")
+    public List<String> getProducts() {
+        List<String> results = new ArrayList<>();
+        productRespository.findAll().forEach(product -> results.add(product.toString()));
+        return results;
+    }
+
     @PostMapping("/product_test")
     public void testProduct(@RequestBody Product product) {
         productRespository.save(product);
@@ -70,7 +77,9 @@ public class RedisPublisherController {
     public List<String> getSessions() {
         Iterable<Session> sessions = sessionRespository.findAll();
         List<String> results = new ArrayList<>();
-        sessions.forEach(session -> results.add(session.toString()));
+        sessions.forEach(session -> {
+            results.add(session.toString());
+        });
         messagePublisher.publish(" [Retrieved Session's data]");
         return results;
     }

@@ -1,6 +1,7 @@
 package com.example.pub.configuration;
 
 import com.example.pub.models.Session;
+import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,12 +16,18 @@ import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactor
 import org.springframework.data.redis.core.RedisKeyExpiredEvent;
 import org.springframework.data.redis.core.RedisKeyValueAdapter;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.convert.KeyspaceConfiguration;
+import org.springframework.data.redis.core.convert.MappingConfiguration;
+import org.springframework.data.redis.core.index.IndexConfiguration;
+import org.springframework.data.redis.core.mapping.RedisMappingContext;
 import org.springframework.data.redis.listener.ChannelTopic;
 import org.springframework.data.redis.listener.RedisMessageListenerContainer;
 import org.springframework.data.redis.listener.adapter.MessageListenerAdapter;
 import org.springframework.data.redis.repository.configuration.EnableRedisRepositories;
 import org.springframework.data.redis.serializer.GenericToStringSerializer;
 import org.springframework.stereotype.Component;
+
+import java.util.Collections;
 
 @Configuration
 @EnableRedisRepositories(enableKeyspaceEvents = RedisKeyValueAdapter.EnableKeyspaceEvents.ON_STARTUP)
@@ -33,7 +40,7 @@ public class RedisConfiguration {
     @Value("${redis.port}")
     private int redisPort;
 
-    @Value("${redis.pubsub.topic:channel-events}")
+    @Value("${redis.topic:channel-events}")
     private String topic;
 
     @Bean
@@ -74,6 +81,22 @@ public class RedisConfiguration {
     @Bean
     MessagePublisher messagePublisher() {
         return new RedisMessagePublisher(redisTemplate(redisConnectionFactory()), channelTopic());
+    }
+
+    @Bean
+    public RedisMappingContext keyValueMappingContext() {
+        return new RedisMappingContext(new MappingConfiguration(new IndexConfiguration(), new MyKeyspaceConfiguration()));
+    }
+
+    public static class MyKeyspaceConfiguration extends KeyspaceConfiguration {
+
+        @Override
+        protected @NotNull Iterable<KeyspaceSettings> initialConfiguration() {
+            KeyspaceSettings keyspaceSettings = new KeyspaceSettings(Session.class, "session");
+            Long redisTimeToLive = 60L;
+            keyspaceSettings.setTimeToLive(redisTimeToLive);
+            return Collections.singleton(keyspaceSettings);
+        }
     }
 
     @Component
