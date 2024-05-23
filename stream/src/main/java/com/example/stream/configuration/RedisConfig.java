@@ -1,15 +1,22 @@
 package com.example.stream.configuration;
 
+import com.example.stream.configuration.consumer.StreamConsumer;
+import com.example.stream.models.Product;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.data.redis.RedisProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.Primary;
+import org.springframework.data.redis.RedisSystemException;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.connection.RedisStandaloneConfiguration;
 import org.springframework.data.redis.connection.stream.ObjectRecord;
+import org.springframework.data.redis.serializer.StringRedisSerializer;
 import org.springframework.data.redis.stream.Subscription;
 import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
 import org.springframework.data.redis.connection.stream.Consumer;
@@ -26,16 +33,16 @@ import org.springframework.data.redis.stream.StreamMessageListenerContainer;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.time.Duration;
+import java.util.UUID;
 
 @Configuration
 @RequiredArgsConstructor
 public class RedisConfig {
+    private static final Logger log = LoggerFactory.getLogger(RedisConfig.class);
     @Value("${redis.host:127.0.0.1}")
     String redisHost;
     @Value("${redis.port:6379}")
     int redisPort;
-    @Value("${redis.stream_key}")
-    String streamKey;
     @Value("${redis.channel_topic:channel-events}")
     String topic;
 
@@ -45,12 +52,20 @@ public class RedisConfig {
     }
 
 
+    private RedisTemplate<String, String> redisTemplate;
+
     @Bean
     @Primary
-    public RedisTemplate<Object, Object> redisTemplate(RedisConnectionFactory redisConnectionFactory) {
-        RedisTemplate<Object, Object> redisTemplate = new RedisTemplate<>();
+    public RedisTemplate<String, String> redisTemplate(RedisConnectionFactory redisConnectionFactory) {
+        RedisTemplate<String, String> redisTemplate = new RedisTemplate<>();
         redisTemplate.setConnectionFactory(redisConnectionFactory);
+        redisTemplate.setKeySerializer(new StringRedisSerializer());
+        redisTemplate.setHashKeySerializer(new StringRedisSerializer());
         redisTemplate.setValueSerializer(new GenericToStringSerializer<Object>(Object.class));
+        redisTemplate.afterPropertiesSet();
+
+        this.redisTemplate = redisTemplate;
+        createStreamGroup(purchaseGroup, purchaseGroup);
         return redisTemplate;
     }
 
@@ -61,43 +76,54 @@ public class RedisConfig {
     }
 
     // Injects a StreamListener bean to handle Redis Stream messages
+    @Value("${redis.stream_purchase}")
+    private String purchaseGroup;
+
     @Autowired
-    private StreamListener<String, ObjectRecord<String, String>> streamListener;
+    @Lazy
+    private StreamListener<String, ObjectRecord<String, Product>> productListener;
 
     @Bean
     public Subscription subscription() throws UnknownHostException {
-        // Work as a MessageListener (<-Stream)
-        // Configures StreamMessageListenerContainer options with a 1-second poll timeout and String as target type
-        var options = StreamMessageListenerContainer
-                .StreamMessageListenerContainerOptions
+        // Set up options for the message listener container
+        var options = StreamMessageListenerContainer.StreamMessageListenerContainerOptions
                 .builder()
-                .pollTimeout(Duration.ofSeconds(1))
-                .targetType(String.class)
+                .pollTimeout(Duration.ofSeconds(1)) // Poll timeout of 1 second
+                .targetType(Product.class) // The expected type of incoming messages
                 .build();
 
-        // Creates the StreamMessageListenerContainer using the redisConnectionFactory and options
+        // Create the message listener container with a Redis connection factory and the specified options
         var listenerContainer = StreamMessageListenerContainer
                 .create(redisConnectionFactory(), options);
 
-        // Sets up a subscription that auto-acknowledges messages
+        // Create and configure a subscription to automatically acknowledge messages
         var subscription = listenerContainer.receiveAutoAck(
-                Consumer.from(streamKey, InetAddress.getLocalHost().getHostName()), // Creates a consumer using the stream key and local host name
-                StreamOffset.create(streamKey, ReadOffset.lastConsumed()), // Starts from the last consumed message
-                streamListener); // Uses the injected StreamListener to handle messages
+                Consumer.from(purchaseGroup, InetAddress.getLocalHost().getHostName()), // Consumer identified by event group and host name
+                StreamOffset.create(purchaseGroup, ReadOffset.lastConsumed()), // Start consuming from the last consumed offset
+                productListener); // Processing logic for received messages
 
-        listenerContainer.start(); // Starts the listener container
-        return subscription; // Returns the subscription bean
+        // Start the listener container to begin receiving messages
+        listenerContainer.start();
+
+        // Return the configured subscription
+        return subscription;
     }
 
-    // Required for listening
+    private void createStreamGroup(String key, String group) {
+        try {
+            this.redisTemplate.opsForStream().createGroup(key, group);
+        } catch (RedisSystemException e) {
+            var cause = e.getCause();
+            if (cause != null) {
+                log.info("Stream - redis group existed, skip group creation [{}]->[{}]", key, group);
+            }
+        }
+    }
+
+    // Listenner
     @Bean
     public ChannelTopic channelTopic() {
         return new ChannelTopic(topic);
-    }
-
-    @Bean
-    MessagePublisher messagePublisher() {
-        return new RedisMessagePublisher(redisTemplate(redisConnectionFactory()), channelTopic());
     }
 
     @Bean
@@ -110,6 +136,6 @@ public class RedisConfig {
 
     @Bean
     MessageListenerAdapter messageListenerAdapter() {
-        return new MessageListenerAdapter(new RedisMessageSubscriber(), "onMessage");
+        return new MessageListenerAdapter(new StreamConsumer(), "onMessage");
     }
 }
