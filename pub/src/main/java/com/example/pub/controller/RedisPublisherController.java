@@ -34,19 +34,20 @@ public class RedisPublisherController {
     public List<String> getProducts() {
         List<String> results = new ArrayList<>();
         productRespository.findAll().forEach(product -> results.add(product.toString()));
+        messagePublisher.publish("[Retrieved list of products");
         return results;
     }
 
     @PostMapping("/product_test")
     public void testProduct(@RequestBody Product product) {
         productRespository.save(product);
-        messagePublisher.publish(" [Added Test Product ]");
+        messagePublisher.publish("[Added Test Product]");
     }
 
     @PostMapping("/product")
     public void newProduct(@RequestBody Product product) {
         String result = productAdd(product);
-        messagePublisher.publish(" [Added " + result + "]");
+        messagePublisher.publish("[Added " + result + "]");
     }
 
     @PutMapping("/product")
@@ -70,7 +71,7 @@ public class RedisPublisherController {
     public void newSession() {
         Session session = new Session();
         sessionRespository.save(session);
-        messagePublisher.publish(" [Added " + session + "]");
+        messagePublisher.publish("[Added " + session + "]");
     }
 
     @GetMapping("/sessions")
@@ -80,7 +81,7 @@ public class RedisPublisherController {
         sessions.forEach(session -> {
             results.add(session.toString());
         });
-        messagePublisher.publish(" [Retrieved Session's data]");
+        messagePublisher.publish("[Retrieved Session's data]");
         return results;
     }
 
@@ -103,7 +104,7 @@ public class RedisPublisherController {
             productRespository.save(product);
             Product itemValue = item.get();
             String updateLog = productUpdate_Log(itemValue, product);
-            logger.info(">> Updated: {}", "Product[" + product.getId() + "]{" + updateLog + "}");
+            messagePublisher.publish("Updated: Product[" + product.getId() + "]{" + updateLog + "}");
             return "Success";
         } else {
             return "Failed (Product haven't existed)";
