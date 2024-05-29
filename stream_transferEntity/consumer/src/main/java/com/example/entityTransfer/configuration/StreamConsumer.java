@@ -116,7 +116,7 @@ public class StreamConsumer implements StreamListener<String, ObjectRecord<Strin
         });
 
         if (tribesId.get() == 0) {
-            h2TribesRepository.save(new H2Tribes(creatureType, 0, 1));
+            h2TribesRepository.save(new H2Tribes(creatureType, (dataDTO.getGender() ? 1 : 0), (dataDTO.getGender() ? 0 : 1)));
         } else {
             if (h2TribesRepository.findById(String.valueOf(tribesId.get())).isPresent()) {
                 H2Tribes currTribe = h2TribesRepository.findById(String.valueOf(tribesId.get())).get();
