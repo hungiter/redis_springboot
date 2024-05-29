@@ -3,7 +3,6 @@ package com.example.consumer1.configuration;
 import com.example.consumer1.helper.StreamDataHelper;
 import com.example.consumer1.helper.StreamToDatabase;
 import com.example.consumer1.models.Entity.TransferInfo;
-import com.example.consumer1.models.Data.Transfer.TransferInfoDTO;
 import com.example.consumer1.models.Entity.TransferInfoRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,12 +14,9 @@ import org.springframework.data.redis.core.ReactiveRedisTemplate;
 import org.springframework.data.redis.stream.StreamListener;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
-import reactor.core.publisher.Flux;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
 @Component
