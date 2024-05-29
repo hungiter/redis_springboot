@@ -48,18 +48,15 @@ public class CreaturesDTO {
     }
 
     private List<String> creatureSkills() {
-        return skills.stream()
-                .map(EnumUtil::convertEnumName)
-                .collect(Collectors.toCollection(ArrayList::new));
+        return skills.stream().map(EnumUtil::convertEnumName).collect(Collectors.toCollection(ArrayList::new));
     }
 
     private String creatureInfo() {
-        return creatureGender() + " " + creatureColor() + " " + creatureType();
+        return creatureColor() + " " + creatureType() + "(" + creatureGender() + ")";
     }
 
     @Override
     public String toString() {
-        return "Creature's info:{" + creatureInfo() + "'s skills: "
-                + creatureSkills().stream().map(skill -> "\n  " + skill).collect(Collectors.joining());
+        return creatureInfo() + "\n   Skills:" + creatureSkills().stream().map(skill -> "\n    " + skill).collect(Collectors.joining());
     }
 }

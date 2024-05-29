@@ -13,27 +13,25 @@ public class H2Creatures {
     private Long id;
 
     @Column(name = "type", nullable = false)
-    private final String type;
+    private String type;
 
     @Column(name = "color", nullable = false)
-    private final String color;
+    private String color;
 
     @Column(name = "gender", nullable = false)
-    private final boolean gender;
+    private boolean gender;
 
     @Column(name = "skills", nullable = false)
-    private final List<String> skills;
+    private List<String> skills;
 
-    @Column(name = "quantity", nullable = false)
-    private final int quantity;
+    public H2Creatures() {
+    }
 
-
-    public H2Creatures(String type, String color, boolean gender, List<String> skills, int quantity) {
+    public H2Creatures(String type, String color, boolean gender, List<String> skills) {
         this.type = type;
         this.color = color;
         this.gender = gender;
         this.skills = skills;
-        this.quantity = quantity;
     }
 
     public String getType() {
@@ -52,7 +50,19 @@ public class H2Creatures {
         return skills;
     }
 
-    public int getQuantity() {
-        return quantity;
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public void setColor(String color) {
+        this.color = color;
+    }
+
+    public void setGender(boolean gender) {
+        this.gender = gender;
+    }
+
+    public void setSkills(List<String> skills) {
+        this.skills = skills;
     }
 }
