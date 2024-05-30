@@ -22,6 +22,9 @@ public class H2Tribes {
     @Column(name = "tribe's population", nullable = false)
     private int quantity;
 
+    @Column(name = "tribe's tp", nullable = false)
+    private int tp;
+
     public H2Tribes() {
     }
 
@@ -64,6 +67,14 @@ public class H2Tribes {
 
     private void setQuantity() {
         this.quantity = this.male + this.female;
+    }
+
+    public int getTp() {
+        return tp;
+    }
+
+    public void setTp(int tp) {
+        this.tp = tp;
     }
 
     public Long getId() {

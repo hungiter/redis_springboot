@@ -1,5 +1,6 @@
 package com.example.entityTransfer.entities.dtos;
 
+import com.example.entityTransfer.entities.models.CreaturesSkill;
 import com.example.entityTransfer.entities.utils.EnumUtil;
 
 import java.util.ArrayList;
@@ -10,9 +11,9 @@ public class CreaturesDTO {
     String type;
     String color;
     boolean gender;
-    List<String> skills;
+    List<CreaturesSkill> skills;
 
-    public CreaturesDTO(String type, String color, boolean gender, List<String> skills) {
+    public CreaturesDTO(String type, String color, boolean gender, List<CreaturesSkill> skills) {
         this.type = type;
         this.color = color;
         this.gender = gender;
@@ -32,9 +33,12 @@ public class CreaturesDTO {
     }
 
     public List<String> getSkills() {
-        return skills;
+        return skills.stream()
+                .map(CreaturesSkill::name)
+                .collect(Collectors.toCollection(ArrayList::new));
     }
 
+    // Private string processors
     private String creatureType() {
         return EnumUtil.convertEnumName(type);
     }
@@ -48,9 +52,15 @@ public class CreaturesDTO {
     }
 
     private List<String> creatureSkills() {
-        return skills.stream()
+        return getSkills().stream()
                 .map(EnumUtil::convertEnumName)
                 .collect(Collectors.toCollection(ArrayList::new));
+    }
+
+    public int totalPower() {
+        return skills.stream()
+                .mapToInt(CreaturesSkill::getPower)
+                .sum();
     }
 
     private String creatureInfo() {
@@ -59,6 +69,8 @@ public class CreaturesDTO {
 
     @Override
     public String toString() {
-        return creatureInfo() + "\n   Skills:" + creatureSkills().stream().map(skill -> "\n    " + skill).collect(Collectors.joining());
+        return creatureInfo() + "\n   Skills:"
+                + creatureSkills().stream().map(skill -> "\n    " + skill).collect(Collectors.joining())
+                + "\nTotal power: " + totalPower();
     }
 }

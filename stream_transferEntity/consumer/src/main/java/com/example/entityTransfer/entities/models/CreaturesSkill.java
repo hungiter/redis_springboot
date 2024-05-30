@@ -7,43 +7,45 @@ import java.util.Random;
 
 public enum CreaturesSkill {
     // Dragon Skills
-    FIRE_BREATHING(CreatureType.DRAGON),
-    FLIGHT(CreatureType.DRAGON),
-    IMMENSE_STRENGTH(CreatureType.DRAGON),
-    DRAGON_MAGIC(CreatureType.DRAGON),
-    LONGEVITY(CreatureType.DRAGON),
+    FIRE_BREATHING(CreatureType.DRAGON,100),
+    FLIGHT(CreatureType.DRAGON,150),
+    IMMENSE_STRENGTH(CreatureType.DRAGON,200),
+    DRAGON_MAGIC(CreatureType.DRAGON,200),
+    LONGEVITY(CreatureType.DRAGON,300),
 
     // Griffin Skills
-    ENHANCED_VISION(CreatureType.GRIFFIN),
-    GRIFFIN_STRENGTH(CreatureType.GRIFFIN),
-    GUARDIANSHIP(CreatureType.GRIFFIN),
-    GRIFFIN_AGILITY(CreatureType.GRIFFIN),
+    ENHANCED_VISION(CreatureType.GRIFFIN,50),
+    GRIFFIN_STRENGTH(CreatureType.GRIFFIN,150),
+    GUARDIANSHIP(CreatureType.GRIFFIN,100),
+    GRIFFIN_AGILITY(CreatureType.GRIFFIN,100),
 
     // Unicorn Skills
-    HEALING(CreatureType.UNICORN),
-    PURITY_GRACE(CreatureType.UNICORN),
-    UNICORN_SPEED(CreatureType.UNICORN),
-    UNICORN_MAGIC(CreatureType.UNICORN),
-    IMMORTALITY(CreatureType.UNICORN),
+    HEALING(CreatureType.UNICORN,150),
+    PURITY_GRACE(CreatureType.UNICORN,100),
+    UNICORN_SPEED(CreatureType.UNICORN,100),
+    UNICORN_MAGIC(CreatureType.UNICORN,150),
+    IMMORTALITY(CreatureType.UNICORN,200),
 
     // Phoenix Skills
-    REBIRTH(CreatureType.PHOENIX),
-    FIRE_MANIPULATION(CreatureType.PHOENIX),
-    HEALING_TEARS(CreatureType.PHOENIX),
-    PHOENIX_LONGEVITY(CreatureType.PHOENIX),
-    PHOENIX_FLIGHT(CreatureType.PHOENIX),
+    REBIRTH(CreatureType.PHOENIX,300),
+    FIRE_MANIPULATION(CreatureType.PHOENIX,150),
+    HEALING_TEARS(CreatureType.PHOENIX,150),
+    PHOENIX_LONGEVITY(CreatureType.PHOENIX,300),
+    PHOENIX_FLIGHT(CreatureType.PHOENIX,150),
 
     // Queen Mab Skills
-    DREAM_MANIPULATION(CreatureType.QUEEN_MAB),
-    FAIRY_MAGIC(CreatureType.QUEEN_MAB),
-    ILLUSION_CREATION(CreatureType.QUEEN_MAB),
-    SHAPE_SHIFTING(CreatureType.QUEEN_MAB),
-    CONTROL_OVER_NATURE(CreatureType.QUEEN_MAB);
+    DREAM_MANIPULATION(CreatureType.QUEEN_MAB,150),
+    FAIRY_MAGIC(CreatureType.QUEEN_MAB,150),
+    ILLUSION_CREATION(CreatureType.QUEEN_MAB,200),
+    SHAPE_SHIFTING(CreatureType.QUEEN_MAB,200),
+    CONTROL_OVER_NATURE(CreatureType.QUEEN_MAB,300);
 
     private final CreatureType creatureType;
+    private final int power;
 
-    CreaturesSkill(CreatureType creatureType) {
+    CreaturesSkill(CreatureType creatureType,int power) {
         this.creatureType = creatureType;
+        this.power = power;
     }
 
     public CreatureType getCreatureType() {
@@ -65,6 +67,9 @@ public enum CreaturesSkill {
         }
 
         return skills;
+    }
 
+    public int getPower() {
+        return power;
     }
 }

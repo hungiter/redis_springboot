@@ -26,8 +26,6 @@ public class Creatures {
     }
 
     public CreaturesDTO creatureInfo() {
-        return new CreaturesDTO(this.type.name(), this.color.name(), this.gender.name().equals("MALE"), skills.stream()
-                .map(CreaturesSkill::name)
-                .collect(Collectors.toCollection(ArrayList::new)));
+        return new CreaturesDTO(this.type.name(), this.color.name(), this.gender.name().equals("MALE"), this.skills);
     }
 }
