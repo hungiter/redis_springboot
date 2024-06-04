@@ -4,8 +4,6 @@ import jakarta.persistence.*;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-
 
 @Entity
 @Table(name = "Sessions")
@@ -24,10 +22,10 @@ public class H2Sessions implements Serializable {
     private String status;
 
     @Column(name = "createAt", nullable = false)
-    private String createAt;
+    private LocalDateTime createAt;
 
     @Column(name = "updatedAt", nullable = false)
-    private String updatedAt;
+    private LocalDateTime updatedAt;
 
     public H2Sessions() {
     }
@@ -58,30 +56,35 @@ public class H2Sessions implements Serializable {
         this.status = status;
     }
 
-    public String getCreateAt() {
+    public LocalDateTime getCreateAt() {
         return createAt;
     }
 
-    public void setCreateAt(String createAt) {
+    public void setCreateAt(LocalDateTime createAt) {
         this.createAt = createAt;
     }
 
-    public String getUpdatedAt() {
+    public LocalDateTime getUpdatedAt() {
         return updatedAt;
     }
 
-    public void setUpdatedAt(String updatedAt) {
+    public void setUpdatedAt(LocalDateTime updatedAt) {
         this.updatedAt = updatedAt;
     }
 
-    public void initTime() {
-        String now = dateTimeFormatter(LocalDateTime.now());
-        setCreateAt(now);
-        setUpdatedAt(now);
+    public String getContract() {
+        return contract;
     }
 
-    private String dateTimeFormatter(LocalDateTime dateTime) {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-        return dateTime.format(formatter);
+    public void setContract(String contract) {
+        this.contract = contract;
     }
+
+
+
+    public void initTime() {
+        setCreateAt(LocalDateTime.now());
+        setUpdatedAt(LocalDateTime.now());
+    }
+
 }

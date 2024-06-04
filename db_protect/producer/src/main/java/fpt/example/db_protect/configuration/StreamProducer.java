@@ -50,7 +50,6 @@ public class StreamProducer implements StreamEventPublisher {
 
 
         this.record = StreamRecords.newRecord().ofObject(session).withStreamKey(streamKey);
-        System.out.println(this.record.getValue());
         if (!isExisted()) {
             System.out.println((sessionId.get()) + "." + session.sessionInfo());
             this.redisTemplate.opsForStream().add(this.record).subscribe();

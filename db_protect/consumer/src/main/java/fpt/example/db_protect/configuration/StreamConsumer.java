@@ -43,7 +43,7 @@ public class StreamConsumer implements StreamListener<String, ObjectRecord<Strin
     public void onMessage(ObjectRecord<String, Sessions> record) {
         Sessions session = record.getValue();
         this.record = record;
-        System.out.printf("%n%s%n", session.sessionInfo());
+//        System.out.printf("%n%s%n", session.sessionInfo());
 
         if (!sessionExisted()) {
             localUpdate();

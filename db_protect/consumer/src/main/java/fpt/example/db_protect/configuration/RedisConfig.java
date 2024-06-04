@@ -1,11 +1,15 @@
 package fpt.example.db_protect.configuration;
 
+import fpt.example.db_protect.filter.HeaderValidationFilter;
+import fpt.example.db_protect.filter.RequestResponseLoggingFilter;
+import fpt.example.db_protect.filter.TransactionFilter;
 import fpt.example.db_protect.models.Sessions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.data.redis.RedisProperties;
+import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.Bean;
@@ -137,4 +141,43 @@ public class RedisConfig {
                 .disableCachingNullValues();  // Do not cache null values
     }
     // Redis Cache Config -------------- End
+
+
+    // Filter Config -------------- Start
+    @Bean
+    public FilterRegistrationBean<HeaderValidationFilter> headerValidationFilter() {
+        FilterRegistrationBean<HeaderValidationFilter> registrationBean = new FilterRegistrationBean<>();
+
+        registrationBean.setFilter(new HeaderValidationFilter());
+        registrationBean.addUrlPatterns("/subscriber/*"); // Apply to specific URL patterns
+        registrationBean.setOrder(1); // Set the order of this filter
+
+        return registrationBean;
+    }
+
+    @Bean
+    public FilterRegistrationBean<TransactionFilter> transactionFilter() {
+        FilterRegistrationBean<TransactionFilter> registrationBean
+                = new FilterRegistrationBean<>();
+
+        registrationBean.setFilter(new TransactionFilter());
+        registrationBean.addUrlPatterns("/subscriber/get/*");
+        registrationBean.setOrder(2);
+
+        return registrationBean;
+    }
+
+    @Bean
+    public FilterRegistrationBean<RequestResponseLoggingFilter> loggingFilter() {
+        FilterRegistrationBean<RequestResponseLoggingFilter> registrationBean
+                = new FilterRegistrationBean<>();
+
+        registrationBean.setFilter(new RequestResponseLoggingFilter());
+        registrationBean.addUrlPatterns("/subscriber/get/*");
+        registrationBean.setOrder(3);
+
+        return registrationBean;
+    }
+
+    // Filter Config -------------- End
 }
