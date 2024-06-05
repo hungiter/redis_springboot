@@ -2,43 +2,31 @@ package com.example.entityTransfer.entities.dtos;
 
 import com.example.entityTransfer.entities.models.CreaturesSkill;
 import com.example.entityTransfer.entities.utils.EnumUtil;
+import lombok.*;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Data
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class CreaturesDTO {
     String type;
     String color;
     boolean gender;
     List<CreaturesSkill> skills;
 
-    public CreaturesDTO(String type, String color, boolean gender, List<CreaturesSkill> skills) {
-        this.type = type;
-        this.color = color;
-        this.gender = gender;
-        this.skills = skills;
-    }
 
-    public String getType() {
-        return type;
-    }
-
-    public String getColor() {
-        return color;
-    }
-
-    public boolean getGender() {
-        return gender;
-    }
-
+    // Self-defined
     public List<String> getSkills() {
         return skills.stream()
                 .map(CreaturesSkill::name)
                 .collect(Collectors.toCollection(ArrayList::new));
     }
 
-    // Private string processors
     private String creatureType() {
         return EnumUtil.convertEnumName(type);
     }

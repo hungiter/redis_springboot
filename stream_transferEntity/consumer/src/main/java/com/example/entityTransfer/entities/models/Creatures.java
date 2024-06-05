@@ -1,8 +1,7 @@
 package com.example.entityTransfer.entities.models;
 
 import com.example.entityTransfer.entities.dtos.CreaturesDTO;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.springframework.data.redis.core.RedisHash;
 
 import java.util.ArrayList;
@@ -11,20 +10,18 @@ import java.util.stream.Collectors;
 
 @RedisHash("creatures")
 @Data
+@Getter
+@Setter
+@ToString
 @NoArgsConstructor
+@AllArgsConstructor
 public class Creatures {
     CreatureType type;
     CreaturesColor color;
     Gender gender;
     List<CreaturesSkill> skills;
 
-    public Creatures(CreatureType type, CreaturesColor color, Gender gender, List<CreaturesSkill> skills) {
-        this.type = type;
-        this.color = color;
-        this.gender = gender;
-        this.skills = skills;
-    }
-
+    // Self-defined
     public CreaturesDTO creatureInfo() {
         return new CreaturesDTO(this.type.name(), this.color.name(), this.gender.name().equals("MALE"), this.skills);
     }

@@ -2,35 +2,17 @@ package com.example.consumer1.models.Data.Transfer;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
+import lombok.*;
 
 @Data
 @ToString
+@Getter
 @NoArgsConstructor
+@AllArgsConstructor
 public class TransferInfoDTO {
     String from;
     String to;
     String transferId;
-
-    public TransferInfoDTO(String from, String to, String transferId) {
-        this.from = from;
-        this.to = to;
-        this.transferId = transferId;
-    }
-
-    public String getFrom() {
-        return from;
-    }
-
-    public String getTo() {
-        return to;
-    }
-
-    public String getTransferId() {
-        return transferId;
-    }
 
     // Convert Object to Json
     public String toJson(){

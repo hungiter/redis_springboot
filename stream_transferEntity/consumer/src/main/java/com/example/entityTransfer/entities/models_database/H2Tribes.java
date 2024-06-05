@@ -1,10 +1,16 @@
 package com.example.entityTransfer.entities.models_database;
 
 import jakarta.persistence.*;
+import lombok.*;
 
 
 @Entity
 @Table(name = "Tribes")
+@Data
+@Getter
+@Setter
+@ToString
+@NoArgsConstructor
 public class H2Tribes {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -25,8 +31,6 @@ public class H2Tribes {
     @Column(name = "tribe's tp", nullable = false)
     private int tp;
 
-    public H2Tribes() {
-    }
 
     public H2Tribes(String creatureType, int male, int female) {
         this.creatureType = creatureType;
@@ -35,25 +39,10 @@ public class H2Tribes {
         this.quantity = male + female;
     }
 
-    public String getCreatureType() {
-        return creatureType;
-    }
-
-    public void setCreatureType(String creatureType) {
-        this.creatureType = creatureType;
-    }
-
-    public int getMale() {
-        return male;
-    }
-
+    // Self-defined
     public void setMale(int male) {
         this.male = male;
         setQuantity();
-    }
-
-    public int getFemale() {
-        return female;
     }
 
     public void setFemale(int female) {
@@ -61,23 +50,8 @@ public class H2Tribes {
         setQuantity();
     }
 
-    public int getQuantity() {
-        return quantity;
-    }
-
     private void setQuantity() {
         this.quantity = this.male + this.female;
     }
 
-    public int getTp() {
-        return tp;
-    }
-
-    public void setTp(int tp) {
-        this.tp = tp;
-    }
-
-    public Long getId() {
-        return id;
-    }
 }

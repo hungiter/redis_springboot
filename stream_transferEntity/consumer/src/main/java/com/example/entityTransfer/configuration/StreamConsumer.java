@@ -100,7 +100,7 @@ public class StreamConsumer implements StreamListener<String, ObjectRecord<Strin
 
     private void addCreatures(CreaturesDTO creaturesDTO) {
         // Add new creatures
-        H2Creatures creature = new H2Creatures(creaturesDTO.getType(), creaturesDTO.getColor(), creaturesDTO.getGender(), creaturesDTO.getSkills());
+        H2Creatures creature = new H2Creatures(creaturesDTO.getType(), creaturesDTO.getColor(), creaturesDTO.isGender(), creaturesDTO.getSkills());
         h2CreaturesRepository.save(creature);
     }
 
@@ -116,14 +116,14 @@ public class StreamConsumer implements StreamListener<String, ObjectRecord<Strin
         });
 
         if (tribesId.get() == 0) {
-            H2Tribes saveTribe = new H2Tribes(creatureType, (dataDTO.getGender() ? 1 : 0), (dataDTO.getGender() ? 0 : 1));
+            H2Tribes saveTribe = new H2Tribes(creatureType, (dataDTO.isGender() ? 1 : 0), (dataDTO.isGender() ? 0 : 1));
             saveTribe.setTp(dataDTO.totalPower());
             h2TribesRepository.save(saveTribe);
         } else {
             if (h2TribesRepository.findById(String.valueOf(tribesId.get())).isPresent()) {
                 H2Tribes currTribe = h2TribesRepository.findById(String.valueOf(tribesId.get())).get();
-                currTribe.setMale(currTribe.getMale() + (dataDTO.getGender() ? 1 : 0));
-                currTribe.setFemale(currTribe.getFemale() + (dataDTO.getGender() ? 0 : 1));
+                currTribe.setMale(currTribe.getMale() + (dataDTO.isGender() ? 1 : 0));
+                currTribe.setFemale(currTribe.getFemale() + (dataDTO.isGender() ? 0 : 1));
                 currTribe.setTp(currTribe.getTp() + dataDTO.totalPower());
                 h2TribesRepository.save(currTribe);
             }

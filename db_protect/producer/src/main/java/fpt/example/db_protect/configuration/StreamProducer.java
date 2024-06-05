@@ -51,13 +51,13 @@ public class StreamProducer implements StreamEventPublisher {
 
         this.record = StreamRecords.newRecord().ofObject(session).withStreamKey(streamKey);
         if (!isExisted()) {
-            System.out.println((sessionId.get()) + "." + session.sessionInfo());
+            System.out.println((sessionId.get()) + "." + session.toString());
             this.redisTemplate.opsForStream().add(this.record).subscribe();
             sessionId.incrementAndGet();
             return session;
         }
 
-        return new Sessions("", "", "");
+        return new Sessions();
     }
 
     @Scheduled(fixedRate = 50000, initialDelay = 50000)
