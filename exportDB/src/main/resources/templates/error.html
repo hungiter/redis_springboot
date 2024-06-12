@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Error Page</title>
+</head>
+<body>
+<h1>Error Page</h1>
+
+<div th:if="${errorMessage}">
+    <p th:text="${errorMessage}" class="error-message"></p>
+</div>
+
+<a th:if="${redirectUrl}" th:href="${redirectUrl}" class="redirect-link">Click here to go back</a>
+</body>
+</html>

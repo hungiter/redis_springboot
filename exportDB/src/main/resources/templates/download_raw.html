@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Export and Close Example</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        /* Center content */
+        .container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="text-center">
+        <h1>Export and Close Example</h1>
+        <div th:if="${totalPage != null and totalPage>0}">
+            <ul class="list-group">
+                <li class="list-group-item" th:each="i : ${#numbers.sequence(0, totalPage-1)}">
+                    Page [[${i+1}]]
+
+                    <button type="button" class="btn btn-primary ml-3" th:onclick="'download(' + ${i} + ')'">
+                        Export
+                    </button>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
+<!-- JavaScript -->
+<script>
+    // Function to download the file and close the window
+    function download(page) {
+        const url = window.location.href;
+        const clearUrl = url.replace(/\/\//g, '/');
+        const splittedClearUrl = clearUrl.split('/');
+
+        const data = {
+            status: String(splittedClearUrl[splittedClearUrl.length - 1]),
+            page: String(page)
+        };
+        const urlParams = new URLSearchParams(data);
+        const downloadUrl = `download?${urlParams.toString()}`;
+
+        const options = {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+        };
+
+        fetch(downloadUrl,options)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`Network response was not ok: ${response.statusText}`);
+                }
+
+                // Get the filename from the Content-Disposition header if available
+                const contentDisposition = response.headers.get('Content-Disposition');
+                let filename = 'exported-data.csv'; // Default filename
+                if (contentDisposition && contentDisposition.includes('attachment')) {
+                    const matches = /filename[^;=\n]*=(([\'"]).*?\2|[^;\n]*)/.exec(contentDisposition);
+                    if (matches != null && matches[1]) {
+                        filename = matches[1].replace(/['"]/g, ''); // Remove any surrounding quotes
+                    }
+                }
+                return response.blob().then(blob => ({ blob, filename: filename }));
+            })
+            .then(({ blob, filename }) => {
+                // Blob created, creating download link...
+                const downloadUrl = window.URL.createObjectURL(blob);
+
+                // Hidden a link
+                const a = document.createElement('a');
+                a.style.display = 'none';
+                a.href = downloadUrl;
+                a.download = filename; // Use the filename provided by the user
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+            })
+            .catch(error => {
+                console.error('Error exporting file:', error);
+            });
+    }
+</script>
+<!-- Bootstrap JS and dependencies (Optional) -->
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+
+</html>
