@@ -11,12 +11,16 @@
 	<groupId>fpt.com</groupId>
 	<artifactId>eureka_cloud</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>eureka_cloud_client</name>
-	<description>Eureka&apos;s Cloud - Client Service</description>
+	<name>eureka_cloud_client1</name>
+	<description>Eureka&apos;s Cloud - Client 1</description>
+
 	<properties>
 		<java.version>17</java.version>
+		<maven.compiler.source>17</maven.compiler.source>
+		<maven.compiler.target>17</maven.compiler.target>
 		<spring-cloud.version>2023.0.2</spring-cloud.version>
 	</properties>
+
 	<dependencies>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -31,6 +35,11 @@
 		<dependency>
 			<groupId>org.springframework.cloud</groupId>
 			<artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>
+		</dependency>
+		<!--	Microservices Access	-->
+		<dependency>
+			<groupId>org.springframework.cloud</groupId>
+			<artifactId>spring-cloud-starter-openfeign</artifactId>
 		</dependency>
 
 		<dependency>
@@ -73,4 +82,17 @@
 		</plugins>
 	</build>
 
+	<!--Pack as jar-->
+	<pluginRepositories>
+		<pluginRepository>
+			<id>spring-snapshots</id>
+			<url>https://repo.spring.io/snapshot</url>
+		</pluginRepository>
+		<pluginRepository>
+			<id>spring-milestones</id>
+			<url>https://repo.spring.io/milestone</url>
+		</pluginRepository>
+	</pluginRepositories>
+
+	<packaging>jar</packaging>
 </project>

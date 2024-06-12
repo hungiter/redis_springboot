@@ -11,8 +11,8 @@
 	<groupId>fpt.com</groupId>
 	<artifactId>eureka_cloud</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>eureka_cloud_server</name>
-	<description>Eureka&apos;s Cloud - Server</description>
+	<name>eureka_cloud_client2</name>
+	<description>Eureka&apos;s Cloud - Client 2</description>
 
 	<properties>
 		<java.version>17</java.version>
@@ -26,10 +26,21 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-web</artifactId>
 		</dependency>
-
+		<!-- Spring Boot Starter Actuator -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-actuator</artifactId>
+		</dependency>
+		<!-- Eureka Client -->
 		<dependency>
 			<groupId>org.springframework.cloud</groupId>
-			<artifactId>spring-cloud-starter-netflix-eureka-server</artifactId>
+			<artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>
+		</dependency>
+
+		<!--	Microservices Access	-->
+		<dependency>
+			<groupId>org.springframework.cloud</groupId>
+			<artifactId>spring-cloud-starter-openfeign</artifactId>
 		</dependency>
 
 		<dependency>
